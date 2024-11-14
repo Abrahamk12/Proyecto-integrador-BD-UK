@@ -33,7 +33,7 @@ def actualizarEstado(nombre:str, activo:int):
     conexion.commit()
     conexion.close()
 
-def actualizarEstado(nombre:str, contraseña:str):
+def actualizarContraseña(nombre:str, contraseña:str):
     conexion = conectarse()
     with conexion.cursor() as cursor:
         cursor.execute("UPDATE contraseña SET contraseña = " + "'" + contraseña + "'" + "WHERE nombre = " + "'" + nombre + "'")
@@ -42,11 +42,26 @@ def actualizarEstado(nombre:str, contraseña:str):
 #endregion
 
 #region setDatos
+def guardarConvinacionesMulti(multiplexor:str)->None:
+    conexion = conectarse()
+    with conexion.cursor() as cursor:
+        cursor.execute("INSERT INTO combinaciones(multiplexor) VALUES (%s)",
+                       (multiplexor))
+    conexion.commit()
+    conexion.close()
+
+def guardarConvinacionesDemulti(demultiplexor:str)->None:
+    conexion = conectarse()
+    with conexion.cursor() as cursor:
+        cursor.execute("INSERT INTO combinaciones(demultiplexor) VALUES (%s)",
+                       (demultiplexor))
+    conexion.commit()
+    conexion.close()
 
 #endregion
 
 #region getDatos
-def comprobar_usuario()->list:
+def comprobarUsuario()->list:
     c_us = []
     conexion = conectarse()
     with conexion.cursor() as cursor:
@@ -58,7 +73,7 @@ def comprobar_usuario()->list:
         c_us.append(us.__getitem__(0))
     return c_us
 
-def get_password(nombre:str)->str:
+def getPassword(nombre:str)->str:
     conexion = conectarse()
     with conexion.cursor() as cursor:
         password = cursor.execute("SELECT contraseña FROM usuarios WHERE usuario = " + "'" + nombre + "'")
@@ -68,7 +83,7 @@ def get_password(nombre:str)->str:
         pas = password.__getitem__(i)
     return pas
 
-def get_conceptos()->str:
+def getConceptos(materia:str)->str:
     concepts = []
     conexion = conectarse()
     with conexion.cursor() as cursor:
