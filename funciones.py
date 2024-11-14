@@ -83,17 +83,26 @@ def getPassword(nombre:str)->str:
         pas = password.__getitem__(i)
     return pas
 
-def getConceptos(materia:str)->str:
+def getConceptos(materia:int)->str:
     concepts = []
     conexion = conectarse()
     with conexion.cursor() as cursor:
-        conceptos1 = cursor.execute("SELECT titulo FROM conceptos")
+        conceptos1 = cursor.execute("SELECT titulo FROM conceptos WHERE idpagina =" + "'" + materia +"'")
         conceptos1 = cursor.fetchall()
-        conceptos2 = cursor.execute("SELECT descripcion FROM conceptos")
+        conceptos2 = cursor.execute("SELECT descripcion FROM conceptos WHERE idpagina =" + "'" + materia +"'")
         conceptos2 = cursor.fetchall()
     conexion.close() 
     for i in range(len(conceptos1)):
         concepts.append(conceptos1.__getitem__(i))
         concepts.append(conceptos2.__getitem__(i))
     return concepts
+
+def getIDPagina(pagina:str)->str:
+    conexion = conectarse()
+    with conexion.cursor() as cursor:
+        idPagina = cursor.execute("SELECT idpagina FROM pagina WHERE materia =" + "'" + pagina +"'")
+        idPagina = cursor.fetchone()
+    conexion.close() 
+    idPag = idPagina.__getitem__(0)
+    return idPag
 #endregion

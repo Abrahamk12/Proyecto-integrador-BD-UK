@@ -1,5 +1,8 @@
+import os
 from flask import*
 from passlib.hash import sha256_crypt
+from funciones import *
+from login import incio
 
 app = Flask(__name__)
 app.secret_key = "Moltr3s_3l_Gu4jolot3_M4cías"
@@ -11,10 +14,8 @@ def handle_context():
 @app.route("/")
 @app.route("/")
 def index():
-    datos = get_peliculas()
-    
     if request.method == 'GET':
-        return render_template("index.html", datos = datos)
+        return render_template("index.html")
 
 @app.route('/login', methods=['GET','POST'])
 @app.route('/login/', methods=['GET','POST'])
@@ -26,14 +27,14 @@ def login():
     else:
         if request.method == 'POST':
             usuario = request.form['usuario']
-            user = get_usuario(usuario)
-            c_usuario = comprobar_usuario()
+            user = comprobarUsuario(usuario)
+            c_usuario = comprobarUsuario()
             
             if usuario not in c_usuario:
                 return redirect('/registro')
             else:
                 if usuario == user:
-                    password_db = get_password(usuario) # password guardado
+                    password_db = getPassword(usuario) # password guardado
                     password_forma = request.form['password'] #password presentado
                     verificado = sha256_crypt.verify(password_forma,password_db)
                     user_in_sesion = usuario
@@ -63,39 +64,58 @@ def new_user():
             usuario = request.form['usuario']
             password = request.form['contraseña']
             password_cryp = sha256_crypt.hash(password)
-            c_usuario = comprobar_usuario()
+            c_usuario = comprobarUsuario()
             if usuario not in c_usuario:
-                save_user(usuario, password_cryp)
+                guardarUsuario(usuario, password_cryp)
             return redirect('/login')
 
 @app.route('/bd', methods=['GET'])
 @app.route('/bd/', methods=['GET'])
 def bd():
-    datos
+    Pagina = request.form['matria']
+    idPagina = getIDPagina(Pagina)
+    datos = getConceptos(idPagina)
     if request.method == 'GET':
         return render_template('bd.html', datos = datos)
 
 @app.route('/ed', methods=['GET'])
 @app.route('/ed/', methods=['GET'])
 def ed():
-    datos
+    Pagina = request.form['matria']
+    idPagina = getIDPagina(Pagina)
+    datos = getConceptos(idPagina)
     if request.method == 'GET':
         return render_template('ed.html', datos = datos)
 
-@app.route('/electronica', methods=['GET'])
-@app.route('/electronica/', methods=['GET'])
-def ed():
-    datos
+@app.route('/electronica', methods=['GET','POST'])
+@app.route('/electronica/', methods=['GET','POST'])
+def elec():
+    Pagina = request.form['matria']
+    idPagina = getIDPagina(Pagina)
+    datos = getConceptos(idPagina)
     if request.method == 'GET':
         return render_template('electronica.html', datos = datos)
 
 @app.route('/poo2', methods=['GET'])
 @app.route('/poo2/', methods=['GET'])
 def poo2():
-    datos
+    Pagina = request.form['matria']
+    idPagina = getIDPagina(Pagina)
+    datos = getConceptos(idPagina)
     if request.method == 'GET':
         return render_template('poo2.html', datos = datos)
 
+@app.route('/ident', methods=['GET'])
+@app.route('/ident/', methods=['GET'])
+def ident():
+    if request.method == 'GET':
+        return render_template('indetificacion.html')
+    
+@app.route('/perfil', methods=['GET'])
+@app.route('/perfil/', methods=['GET'])
+def perfil():
+    if request.method == 'GET':
+        return render_template('perfil.html')
 #Cerrar sesion
 @app.route('/logout', methods=['GET'])
 @app.route('/logout/', methods=['GET'])
