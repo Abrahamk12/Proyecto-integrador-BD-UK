@@ -26,7 +26,7 @@ def login():
         return render_template('login.html',mensaje=msg)
     else:
         if request.method == 'POST':
-            usuario = request.form['usuario']
+            usuario = request.form['nombre']
             user = comprobarUsuario(usuario)
             c_usuario = comprobarUsuario()
             
@@ -35,11 +35,11 @@ def login():
             else:
                 if usuario == user:
                     password_db = getPassword(usuario) # password guardado
-                    password_forma = request.form['password'] #password presentado
+                    password_forma = request.form['contraseña'] #password presentado
                     verificado = sha256_crypt.verify(password_forma,password_db)
                     user_in_sesion = usuario
                     if (verificado == True):
-                        session['usuario'] = usuario
+                        session['nombre'] = usuario
                         session['logged_in'] = True
                         incio(user_in_sesion)
                         if 'ruta' in session:
@@ -54,7 +54,7 @@ def login():
 
 @app.route('/registro', methods=['GET','POST'])
 @app.route('/registro/', methods=['GET','POST'])
-def new_user():
+def registro():
     if request.method == 'GET':
         msg = ''
         return render_template('registro.html',mensaje=msg)
