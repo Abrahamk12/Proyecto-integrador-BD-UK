@@ -62,12 +62,14 @@ def registro():
         valor = request.form['enviar']
         if valor == 'Enviar':
             usuario = request.form['usuario']
+            correo = request.form['correo']
             password = request.form['contraseña']
             password_cryp = sha256_crypt.hash(password)
             c_usuario = comprobarUsuario()
             if usuario not in c_usuario:
                 guardarUsuario(usuario, password_cryp)
             return redirect('/login')
+    return render_template('/registro', mensaje='Error en el registro') # Para manejar otros casos
 
 @app.route('/bd', methods=['GET'])
 @app.route('/bd/', methods=['GET'])
